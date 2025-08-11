@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Carrega dados históricos
-CSV_FILE = "dados_lotofacil.csv"
+CSV_FILE = "dados-lotofacil.csv"
 if os.path.exists(CSV_FILE):
     dados = pd.read_csv(CSV_FILE, sep=",")
 else:
@@ -44,3 +44,4 @@ def gerar_combinacoes():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
