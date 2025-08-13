@@ -5,12 +5,10 @@ import pandas as pd
 import random
 
 app = Flask(__name__)
-CORS(app)  # Libera acesso do seu frontend
+CORS(app)
 
-# Nome correto do CSV
-CSV_FILE = "dados_lotofacil.csv"
+CSV_FILE = os.path.join(os.path.dirname(__file__), "dados_lotofacil.csv")
 
-# Carrega os dados se existir o arquivo
 if os.path.exists(CSV_FILE):
     try:
         dados = pd.read_csv(CSV_FILE)
@@ -28,22 +26,15 @@ def gerar_combinacoes():
         quantidade = int(data.get("quantidade", 5))
         dezenas = int(data.get("dezenas", 15))
         excluir = data.get("excluir", [])
-        estrategia = data.get("estrategia", None)
-
-        # Lista de números de 1 a 25, excluindo os removidos
+        
         numeros = [n for n in range(1, 26) if n not in excluir]
 
-        # Validação
         if len(numeros) < dezenas:
-            return jsonify({"erro": "Poucos números disponíveis para gerar combinações"}), 400
+            return jsonify({"erro": "Poucos números disponíveis"}), 400
 
-        jogos = []
-        for _ in range(quantidade):
-            jogo = sorted(random.sample(numeros, dezenas))
-            jogos.append(jogo)
+        jogos = [sorted(random.sample(numeros, dezenas)) for _ in range(quantidade)]
 
         return jsonify(jogos)
-
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
@@ -52,6 +43,5 @@ def home():
     return "✅ Backend Lotofácil IA rodando no Render"
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Porta do Render
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
